@@ -7,6 +7,10 @@
     "./eslint/base": "./eslint/base.js",
     "./eslint/react": "./eslint/react.js",
     "./eslint/node": "./eslint/node.js",
-    "./vite/react": "./vite/react.js"
+    "./vite/react": "./vite/react.js",
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./tsconfig/node.json": "./tsconfig/node.json",
+    "./tsconfig/react.json": "./tsconfig/react.json",
+    "./tsconfig/vite-node.json": "./tsconfig/vite-node.json"
   }
 }
