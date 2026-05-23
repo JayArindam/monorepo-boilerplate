@@ -1,6 +1,7 @@
 {
   "name": "boilerplate-monorepo",
   "private": true,
+  "type": "module",
   "workspaces": [
     "apps/*",
     "packages/*"
