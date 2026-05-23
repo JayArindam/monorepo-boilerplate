@@ -1,0 +1,23 @@
+{
+  "name": "utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utils/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:lib"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/utils",
+        "command": "npm run build"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/utils",
+        "command": "npm run lint"
+      }
+    }
+  }
+}

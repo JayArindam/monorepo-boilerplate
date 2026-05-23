@@ -3,6 +3,7 @@
   "name": "backend",
   "projectType": "application",
   "sourceRoot": "apps/backend/src",
+  "tags": ["scope:backend", "type:app"],
   "targets": {
     "dev": {
       "executor": "nx:run-commands",

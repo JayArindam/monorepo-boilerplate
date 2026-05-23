@@ -1,0 +1,16 @@
+{
+  "name": "config",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/config",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:lib"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/config",
+        "command": "npm run lint --if-present"
+      }
+    }
+  }
+}

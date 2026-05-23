@@ -25,7 +25,12 @@
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json"
     ],
-    "sharedGlobals": []
+    "sharedGlobals": [
+      "{workspaceRoot}/nx.json",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/.prettierrc.json",
+      "{workspaceRoot}/eslint.config.js"
+    ]
   },
   "analytics": false
 }

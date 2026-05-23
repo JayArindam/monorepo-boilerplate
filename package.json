@@ -6,8 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "nx run-many --target=dev --projects=backend,frontend,dashboard",
-    "dev:all": "nx run-many --target=dev --all",
+    "dev": "nx run-many --target=dev --projects=backend,frontend,dashboard --output-style=stream",
     "dev:backend": "nx run backend:dev",
     "dev:frontend": "nx run frontend:dev",
     "dev:dashboard": "nx run dashboard:dev",
@@ -21,7 +20,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "clean": "rimraf node_modules apps/*/node_modules packages/*/node_modules .nx",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [

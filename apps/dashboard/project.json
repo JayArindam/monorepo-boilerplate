@@ -3,6 +3,7 @@
   "name": "dashboard",
   "projectType": "application",
   "sourceRoot": "apps/dashboard/src",
+  "tags": ["scope:dashboard", "type:app"],
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
