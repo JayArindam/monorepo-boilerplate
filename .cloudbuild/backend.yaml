@@ -34,6 +34,17 @@ steps:
       - "0"
       - "--max-instances"
       - "10"
+      # --- ENVIRONMENT VARIABLES & SECRETS INJECTION EXAMPLES ---
+      # To inject environment variables or secrets into Cloud Run at deploy time,
+      # uncomment and customize the following flags:
+      # - "--set-env-vars"
+      # - "NODE_ENV=production"
+      # - "--set-secrets"
+      # - "DATABASE_URL=my-db-secret-name:latest"
+      # Note: The Cloud Run runtime Service Account must have the
+      # "Secret Manager Secret Accessor" role (roles/secretmanager.secretAccessor)
+      # to successfully fetch referenced secrets at container startup.
+      # -----------------------------------------------------------
 
 images:
   # Ensures the image is correctly tracked by Cloud Build

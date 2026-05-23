@@ -263,42 +263,97 @@ docker stop <CONTAINER_ID>
 
 ### Useful Docker Commands
 
-| Command                                                        | Description                             |
-| -------------------------------------------------------------- | --------------------------------------- |
+| Command                                                            | Description                             |
+| ------------------------------------------------------------------ | --------------------------------------- |
 | `docker build -t boilerplate-backend -f apps/backend/Dockerfile .` | Build the backend image                 |
 | `docker run -p 3000:3000 boilerplate-backend`                      | Run the container                       |
 | `docker run -d -p 3000:3000 boilerplate-backend`                   | Run in detached mode (background)       |
 | `docker run -p 8080:8080 -e PORT=8080 boilerplate-backend`         | Run on custom port                      |
-| `docker ps`                                                    | List running containers                 |
-| `docker stop <ID>`                                             | Stop a container                        |
-| `docker logs <ID>`                                             | View container logs                     |
-| `docker logs -f <ID>`                                          | Follow container logs (live tail)       |
-| `docker images`                                                | List all local images                   |
+| `docker ps`                                                        | List running containers                 |
+| `docker stop <ID>`                                                 | Stop a container                        |
+| `docker logs <ID>`                                                 | View container logs                     |
+| `docker logs -f <ID>`                                              | Follow container logs (live tail)       |
+| `docker images`                                                    | List all local images                   |
 | `docker rmi boilerplate-backend`                                   | Remove the backend image                |
-| `docker system prune`                                          | Clean up dangling images and containers |
+| `docker system prune`                                              | Clean up dangling images and containers |
 
 ---
 
-## Cloud Deployment
+## Cloud Deployment & Environments Story
+
+To ship this monorepo to production, you must manage environment configurations securely and understand how they get injected at deploy time. We maintain a clear environment separation:
+
+- **Local Development**: Configured via `.env` (derived from `.env.example`).
+- **Production Reference**: Defined in `.env.production.example`.
+
+---
 
 ### Backend → Google Cloud Run
 
-The backend is deployed automatically via **Cloud Build** when changes are pushed to `main`.
+The NestJS backend is packaged as a Docker container and deployed automatically to **Google Cloud Run** via **Cloud Build** triggers on push to the `main` branch.
 
 - **Trigger config:** `.cloudbuild/backend.yaml`
 - **Dockerfile:** `apps/backend/Dockerfile`
-- **Trigger filter:** Only fires when files in `apps/backend/**` or `packages/**` change.
-- **Live URL:** _replace with your deployment URL_
+- **Trigger filter:** Fires when files in `apps/backend/**` or `packages/**` change.
 
-Test the live backend:
+#### 1. Runtime Environment Variables vs. Secrets
 
-```bash
-curl https://YOUR_DEPLOYMENT_URL/api/v1/health
+- **Non-Sensitive Variables** (e.g., `NODE_ENV`, `PORT`): These can be set directly on the Cloud Run service as simple environment variables at deploy time.
+- **Sensitive Secrets** (e.g., `DATABASE_URL`, API keys): Must be stored securely in **Google Cloud Secret Manager**. Do **NOT** hardcode these or set them as plain environment variables in your repository or build configurations.
+
+#### 2. Deploy-Time Injection via Cloud Build
+
+During the deployment stage in `.cloudbuild/backend.yaml`, the `gcloud run deploy` command is used to configure variables and secrets.
+
+You inject them using the `--set-env-vars` and `--set-secrets` flags:
+
+```yaml
+- "deploy"
+- "${_SERVICE_NAME}"
+- "--image"
+- "gcr.io/$PROJECT_ID/${_SERVICE_NAME}-backend:$COMMIT_SHA"
+- "--region"
+- "${_REGION}"
+- "--allow-unauthenticated"
+# Injecting standard environment variables:
+- "--set-env-vars"
+- "NODE_ENV=production"
+# Injecting sensitive secrets from Secret Manager:
+# Format: ENV_VAR_NAME=SECRET_NAME:VERSION_OR_LATEST
+- "--set-secrets"
+- "DATABASE_URL=my-database-url-secret:latest"
 ```
 
-### Frontend → Cloudflare Pages
+#### 3. GCP IAM Permissions Checklist
 
-The frontend is deployed to Cloudflare Pages (no containers needed — it's pure static hosting with a global CDN).
+For Cloud Run to fetch secrets from Secret Manager at container startup, the service account running your container must have the proper permissions.
+
+1. Identify the service account used by your Cloud Run service (by default, it is the **Default Compute Service Account**: `PROJECT_NUMBER-compute@developer.gserviceaccount.com`).
+2. Navigate to **IAM & Admin** in the GCP Console.
+3. Grant that service account the **Secret Manager Secret Accessor** role (`roles/secretmanager.secretAccessor`) on either the project level or specifically on the individual secrets.
+
+---
+
+### Frontend & Dashboard → Cloudflare Pages (or Vercel)
+
+The React/Vite frontend and dashboard applications are deployed as static assets to **Cloudflare Pages** (or Vercel).
+
+#### 1. Build-Time Static Injection (Crucial)
+
+Unlike the NestJS backend which reads variables from the process environment at runtime, **Vite injects environment variables at BUILD-TIME**.
+
+- When `npm run build` is executed by your build runner, Vite reads environment variables prefixed with `VITE_` and hardcodes their values statically into the compiled HTML/JS client bundles.
+- Changing environment variables in your hosting provider's dashboard **will not take effect** until you trigger a new build/deployment.
+
+#### 2. Configuring Build Variables
+
+1. Go to your **Cloudflare Pages** or **Vercel** dashboard.
+2. Select your project and navigate to **Settings** → **Environment Variables** (or **Build & Deploy**).
+3. Add your production environment variables (e.g. `VITE_API_URL`):
+   - **Variable Name**: `VITE_API_URL`
+   - **Value**: `https://api.yourproductiondomain.com`
+4. Set the environment scope to **Production** (and optionally **Preview** for testing branches).
+5. Trigger a new deployment for the changes to compile into the frontend assets.
 
 ---
 
