@@ -1,0 +1,84 @@
+# ============================================================================
+# Git Line Ending Normalization
+# ============================================================================
+# Auto-detect text files and normalize line endings to LF in the repo.
+# Each OS will check out with its native line ending (CRLF on Windows, LF on Mac/Linux).
+* text=auto eol=lf
+
+# ============================================================================
+# Source Code — always LF
+# ============================================================================
+*.js         text eol=lf
+*.jsx        text eol=lf
+*.ts         text eol=lf
+*.tsx        text eol=lf
+*.mjs        text eol=lf
+*.cjs        text eol=lf
+*.json       text eol=lf
+*.css        text eol=lf
+*.scss       text eol=lf
+*.html       text eol=lf
+*.md         text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+*.xml        text eol=lf
+*.svg        text eol=lf
+*.graphql    text eol=lf
+*.gql        text eol=lf
+
+# ============================================================================
+# Config Files — always LF
+# ============================================================================
+*.env        text eol=lf
+*.env.*      text eol=lf
+.editorconfig text eol=lf
+.gitignore   text eol=lf
+.gitattributes text eol=lf
+.prettierrc  text eol=lf
+.prettierignore text eol=lf
+.eslintignore text eol=lf
+Dockerfile   text eol=lf
+Dockerfile.* text eol=lf
+docker-compose*.yml text eol=lf
+Makefile     text eol=lf
+
+# ============================================================================
+# Shell Scripts — always LF (critical for Unix execution)
+# ============================================================================
+*.sh         text eol=lf
+*.bash       text eol=lf
+.husky/*     text eol=lf
+
+# ============================================================================
+# Windows Scripts — always CRLF
+# ============================================================================
+*.bat        text eol=crlf
+*.cmd        text eol=crlf
+*.ps1        text eol=crlf
+
+# ============================================================================
+# Binary Files — no line ending conversion
+# ============================================================================
+*.png        binary
+*.jpg        binary
+*.jpeg       binary
+*.gif        binary
+*.ico        binary
+*.webp       binary
+*.avif       binary
+*.woff       binary
+*.woff2      binary
+*.ttf        binary
+*.eot        binary
+*.otf        binary
+*.mp4        binary
+*.webm       binary
+*.pdf        binary
+*.zip        binary
+*.tar.gz     binary
+*.lock       binary
+
+# ============================================================================
+# Lock Files — exact content, no merge, no diff
+# ============================================================================
+package-lock.json text eol=lf -diff linguist-generated=true

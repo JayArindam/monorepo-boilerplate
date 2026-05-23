@@ -1,0 +1,40 @@
+steps:
+  # 1. Build the Docker image from the root context using the backend Dockerfile
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/garden-of-valenia-backend:$COMMIT_SHA"
+      - "-f"
+      - "apps/backend/Dockerfile"
+      - "."
+
+  # 2. Push the built image to Google Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/$PROJECT_ID/garden-of-valenia-backend:$COMMIT_SHA"
+
+  # 3. Deploy the new image to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "garden-of-valenia" # Service name from your screenshot
+      - "--image"
+      - "gcr.io/$PROJECT_ID/garden-of-valenia-backend:$COMMIT_SHA"
+      - "--region"
+      - "europe-west2" # Region from your screenshot
+      - "--allow-unauthenticated"
+      - "--min-instances"
+      - "0"
+      - "--max-instances"
+      - "10" # Increased from 2 for better scaling safety!
+
+images:
+  # Ensures the image is correctly tracked by Cloud Build
+  - "gcr.io/$PROJECT_ID/garden-of-valenia-backend:$COMMIT_SHA"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,12 @@
+{
+  "name": "@boilerplate/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/react": "./eslint/react.js",
+    "./eslint/node": "./eslint/node.js",
+    "./vite/react": "./vite/react.js"
+  }
+}
