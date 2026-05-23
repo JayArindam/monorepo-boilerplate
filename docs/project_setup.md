@@ -357,6 +357,32 @@ Unlike the NestJS backend which reads variables from the process environment at 
 
 ---
 
+## Continuous Integration (CI)
+
+This boilerplate includes a pre-configured **GitHub Actions** workflow to automate quality gates and catch regressions before they reach your main branch.
+
+- **Workflow config:** `.github/workflows/ci.yml`
+- **Triggers:** Automatically runs on every `push` to the `main` branch and on every `pull_request` targeting `main`.
+
+### Validation Jobs
+
+The pipeline executes the following checks in order:
+
+1. **Dependency Installation**: Runs `npm ci` to cleanly install project dependencies.
+2. **Format Verification**: Runs `npm run format:check` to check that all code complies with the root Prettier standards.
+3. **Static Code Analysis**: Runs `npm run lint` using ESLint across all apps and shared packages.
+4. **Production Build Compilation**: Runs `npm run build` using Nx to compile all projects and verify that there are no TypeScript or bundler errors.
+5. **Test Suites**: Runs `npm run test` using Nx to execute all unit and integration tests across the workspace.
+
+### Caching and Speed Optimizations
+
+To ensure rapid execution times, the workflow uses two advanced caching layers:
+
+1. **NPM Cache**: Integrates with `actions/setup-node` to cache the global npm cache (`~/.npm`), avoiding redundant network downloads of third-party packages.
+2. **Nx Cache**: Caches the `.nx/cache` directory using `actions/cache` so that unchanged projects skip rebuilds and re-lints across CI runs.
+
+---
+
 ## Troubleshooting
 
 ### `nx: command not found`
